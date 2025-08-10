@@ -171,6 +171,18 @@
       transform: var(--active-scale);
     }
 
+    html, body, .controller, .pad, .dpad, .abxy, .bottom-bar {
+      -webkit-user-select: none;      
+      -webkit-touch-callout: none;    
+      user-select: none;              
+      -webkit-tap-highlight-color: transparent; 
+    }
+
+    .ctrl, .shoulder, .small-btn {
+      -webkit-user-select: none;
+      user-select: none;
+    }
+        
     @media (max-width: 600px) {
       .ctrl, .center-space {
         width: 60px;
@@ -185,18 +197,6 @@
       .shoulder, .small-btn {
         padding: 8px 12px;
         font-size: 14px;
-      }
-
-      html, body, .controller, .pad, .dpad, .abxy, .bottom-bar {
-        -webkit-user-select: none;      
-        -webkit-touch-callout: none;    
-        user-select: none;              =
-        -webkit-tap-highlight-color: transparent; =
-      }
-
-      .ctrl, .shoulder, .small-btn {
-        -webkit-user-select: none;
-        user-select: none;
       }
     }
   </style>
