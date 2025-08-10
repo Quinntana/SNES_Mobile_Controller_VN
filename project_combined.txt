@@ -1,0 +1,450 @@
+Project: console-controller-python
+Directory Structure:
+├── public/
+    ├── index.html
+├── pyproject.toml
+├── src/
+    ├── console_controller/
+        ├── __init__.py
+        ├── main.py
+
+File Contents:
+================================================================================
+
+
+# File: public\index.html
+================================================================================
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SNES Mobile Controller VN</title>
+  <style>
+    :root {
+      --bg-dark: #1a1a1a;
+      --text-light: #f0f0f0;
+      --btn-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      --btn-glow: 0 0 8px rgba(255, 255, 255, 0.2);
+      --gradient-bg: linear-gradient(135deg, #2c2c2c, #111);
+      --btn-a: #e63946;
+      --btn-b: #f4d03f;
+      --btn-x: #457b9d;
+      --btn-y: #2ecc71;
+      --shoulder-btn: #6c757d;
+      --small-btn: #495057;
+      --hover-scale: scale(1.05);
+      --active-scale: scale(0.95);
+    }
+
+    body {
+      background: var(--gradient-bg);
+      color: var(--text-light);
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      transition: background 0.3s ease;
+    }
+
+    h2 {
+      font-size: 24px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      margin: 10px 0;
+      letter-spacing: 1px;
+    }
+
+    #status {
+      margin: 5px;
+      font-size: 16px;
+      padding: 8px 16px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 12px;
+      transition: background 0.3s ease;
+    }
+
+    .controller {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.2);
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4);
+    }
+
+    .pad {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .ctrl {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: #444;
+      color: white;
+      border: none;
+      font-size: 20px;
+      box-shadow: var(--btn-shadow);
+      transition: transform 0.1s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ctrl::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .ctrl:hover::before,
+    .ctrl:active::before {
+      opacity: 1;
+    }
+
+    .ctrl:hover {
+      transform: var(--hover-scale);
+      box-shadow: var(--btn-glow), var(--btn-shadow);
+    }
+
+    .ctrl:active {
+      transform: var(--active-scale);
+    }
+
+    .dpad, .abxy {
+      display: grid;
+      grid-template-columns: 70px 70px 70px;
+      grid-template-rows: 70px 70px 70px;
+      gap: 5px;
+    }
+
+    .center-space {
+      width: 70px;
+      height: 70px;
+    }
+
+    .dpad button {
+      background: #555;
+      border-radius: 12px;
+    }
+
+    .abxy button {
+      background: #555;
+    }
+
+    .abxy .btnA { background: var(--btn-a); }
+    .abxy .btnB { background: var(--btn-b); }
+    .abxy .btnX { background: var(--btn-x); }
+    .abxy .btnY { background: var(--btn-y); }
+
+    .bottom-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 10px;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+    }
+
+    .shoulder, .small-btn {
+      background: var(--shoulder-btn);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      padding: 10px 15px;
+      box-shadow: var(--btn-shadow);
+      transition: transform 0.1s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+    }
+
+    .small-btn {
+      background: var(--small-btn);
+    }
+
+    .shoulder:hover, .small-btn:hover {
+      transform: var(--hover-scale);
+      box-shadow: var(--btn-glow), var(--btn-shadow);
+    }
+
+    .shoulder:active, .small-btn:active {
+      transform: var(--active-scale);
+    }
+
+    @media (max-width: 600px) {
+      .ctrl, .center-space {
+        width: 60px;
+        height: 60px;
+      }
+
+      .dpad, .abxy {
+        grid-template-columns: 60px 60px 60px;
+        grid-template-rows: 60px 60px 60px;
+      }
+
+      .shoulder, .small-btn {
+        padding: 8px 12px;
+        font-size: 14px;
+      }
+
+      html, body, .controller, .pad, .dpad, .abxy, .bottom-bar {
+        -webkit-user-select: none;      
+        -webkit-touch-callout: none;    
+        user-select: none;              =
+        -webkit-tap-highlight-color: transparent; =
+      }
+
+      .ctrl, .shoulder, .small-btn {
+        -webkit-user-select: none;
+        user-select: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h2>SNES Mobile Controller</h2>
+  <div id="status">Connecting…</div>
+
+  <!-- Main controller area -->
+  <div class="controller">
+    <!-- Left: D-pad -->
+    <div class="pad">
+      <div class="dpad">
+        <div></div> <button class="ctrl" id="up">↑</button> <div></div>
+        <button class="ctrl" id="left">←</button> <div class="center-space"></div> <button class="ctrl" id="right">→</button>
+        <div></div> <button class="ctrl" id="down">↓</button> <div></div>
+      </div>
+    </div>
+
+    <!-- Right: ABXY mirrored like D-pad -->
+    <div class="pad">
+      <div class="abxy">
+        <div></div> <button class="ctrl btnX" id="btnX">X</button> <div></div>
+        <button class="ctrl btnY" id="btnY">Y</button> <div class="center-space"></div> <button class="ctrl btnA" id="btnA">A</button>
+        <div></div> <button class="ctrl btnB" id="btnB">B</button> <div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom middle: L / Select / Start / R -->
+  <div class="bottom-bar">
+    <button class="shoulder" id="btnL">L</button>
+    <button class="small-btn" id="selectBtn">Select</button>
+    <button class="small-btn" id="startBtn">Start</button>
+    <button class="shoulder" id="btnR">R</button>
+  </div>
+
+  <script>
+    const wsProto = location.protocol === 'https:' ? 'wss://' : 'ws://';
+    const wsUrl = wsProto + location.host + '/ws';
+    let ws = new WebSocket(wsUrl);
+
+    ws.onopen = () => { document.getElementById('status').innerText = 'Connected'; };
+    ws.onclose = () => {
+      document.getElementById('status').innerText = 'Disconnected — reconnecting...';
+      setTimeout(() => { ws = new WebSocket(wsUrl); }, 1000);
+    };
+    ws.onerror = (e) => { console.error('WS error', e); };
+    ws.onmessage = (m) => {
+      try {
+        const data = JSON.parse(m.data);
+        if(data.type === "hello" && data.player){
+          document.getElementById('status').innerText = `Connected — Player ${data.player}`;
+        }
+      } catch {}
+    };
+
+    function send(obj){ if(ws && ws.readyState === 1) ws.send(JSON.stringify(obj)); }
+
+    const mapping = {
+      'btnA': 'A', 'btnB': 'B', 'btnX': 'X', 'btnY': 'Y',
+      'up': 'UP', 'down': 'DOWN', 'left': 'LEFT', 'right': 'RIGHT',
+      'selectBtn': 'BACK', 'startBtn': 'START',
+      'btnL': 'LB', 'btnR': 'RB'
+    };
+
+    Object.keys(mapping).forEach(id => {
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.addEventListener('touchstart', (e)=>{ e.preventDefault(); send({type:'button', id: mapping[id], state:true}); }, {passive:false});
+      el.addEventListener('touchend',   (e)=>{ e.preventDefault(); send({type:'button', id: mapping[id], state:false}); }, {passive:false});
+      el.addEventListener('mousedown', ()=> send({type:'button', id: mapping[id], state:true}));
+      el.addEventListener('mouseup', ()=> send({type:'button', id: mapping[id], state:false}));
+    });
+  </script>
+</body>
+</html>
+--------------------------------------------------------------------------------
+
+# File: pyproject.toml
+================================================================================
+[tool.poetry]
+name = "console-controller-python"
+version = "0.1.0"
+description = "Mobile browser controller for Windows emulators using ViGEm (vgamepad) and WebSockets"
+authors = ["Your Name <you@example.com>"]
+packages = [{ include = "console_controller", from = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.95.0"
+uvicorn = {extras = ["standard"], version = "^0.23.0"}
+vgamepad = "^0.0.6"
+# (Optional) install for convenience:
+python-multipart = "^0.0.6"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+--------------------------------------------------------------------------------
+
+# File: src\console_controller\__init__.py
+================================================================================
+
+--------------------------------------------------------------------------------
+
+# File: src\console_controller\main.py
+================================================================================
+# src/console_controller/main.py
+import json
+import logging
+from typing import Dict
+
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.staticfiles import StaticFiles
+import vgamepad as vg
+
+app = FastAPI()
+
+logger = logging.getLogger("uvicorn.error")
+
+# Keep track of connected clients and their virtual gamepads
+clients: Dict[str, vg.VX360Gamepad] = {}
+next_player = 1
+
+# Utility: map simple string button ids to vgamepad constants
+BUTTON_MAP = {
+    "A": vg.XUSB_BUTTON.XUSB_GAMEPAD_A,
+    "B": vg.XUSB_BUTTON.XUSB_GAMEPAD_B,
+    "X": vg.XUSB_BUTTON.XUSB_GAMEPAD_X,
+    "Y": vg.XUSB_BUTTON.XUSB_GAMEPAD_Y,
+    "UP": vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_UP,
+    "DOWN": vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_DOWN,
+    "LEFT": vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_LEFT,
+    "RIGHT": vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_RIGHT,
+    "LB": vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER,
+    "RB": vg.XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_SHOULDER,
+    "START": vg.XUSB_BUTTON.XUSB_GAMEPAD_START,
+    "BACK": vg.XUSB_BUTTON.XUSB_GAMEPAD_BACK,
+}
+
+def create_gamepad() -> vg.VX360Gamepad:
+    """Create and return a connected virtual Xbox360 gamepad."""
+    gp = vg.VX360Gamepad()
+    # No explicit connect() call required — creating the object hooks into ViGEm.
+    return gp
+
+async def handle_ws(websocket: WebSocket):
+    global next_player
+    await websocket.accept()
+    client_id = f"{websocket.client.host}:{websocket.client.port}"
+    logger.info(f"Client connected: {client_id}")
+
+    # create virtual pad for this connection
+    pad = create_gamepad()
+    player_id = next_player
+    next_player += 1
+    clients[client_id] = pad
+
+    # send welcome with assigned player id
+    await websocket.send_text(json.dumps({"type": "hello", "player": player_id}))
+
+    try:
+        while True:
+            raw = await websocket.receive_text()
+            try:
+                msg = json.loads(raw)
+            except Exception:
+                continue
+
+            # button message: { "type":"button", "id":"A", "state": true }
+            if msg.get("type") == "button":
+                btn = msg.get("id")
+                state = bool(msg.get("state"))
+                const = BUTTON_MAP.get(btn)
+                if const is not None:
+                    if state:
+                        pad.press_button(button=const)
+                    else:
+                        pad.release_button(button=const)
+                    pad.update()  # send state to system
+
+            # axis message: { "type":"axis", "id":"lx", "value": -1..1 }
+            elif msg.get("type") == "axis":
+                axis = msg.get("id")
+                val = float(msg.get("value", 0.0))
+                # left stick
+                if axis == "lx" or axis == "ly":
+                    # vgamepad expects floats for left_joystick_float(x_value_float, y_value_float)
+                    # We'll maintain temporary state: easiest is to call both each time.
+                    # For simplicity, we accept messages with both coords, or single-axis updates.
+                    # Caller can send {id:"lx", value:0.5} and we merge; here we assume full pairs.
+                    pass
+                # for this simple example, allow direct left/right stick pair updates:
+                if axis == "lstick":
+                    x = float(msg.get("x", 0.0))
+                    y = float(msg.get("y", 0.0))
+                    pad.left_joystick_float(x_value_float=x, y_value_float=y)
+                    pad.update()
+                elif axis == "rstick":
+                    x = float(msg.get("x", 0.0))
+                    y = float(msg.get("y", 0.0))
+                    pad.right_joystick_float(x_value_float=x, y_value_float=y)
+                    pad.update()
+
+            # trigger message: { "type":"trigger", "id":"lt", "value": 0..1 }
+            elif msg.get("type") == "trigger":
+                which = msg.get("id")
+                v = float(msg.get("value", 0.0))
+                if which == "lt":
+                    pad.left_trigger_float(value_float=v)
+                    pad.update()
+                elif which == "rt":
+                    pad.right_trigger_float(value_float=v)
+                    pad.update()
+
+    except WebSocketDisconnect:
+        logger.info(f"Client disconnected: {client_id}")
+    finally:
+        try:
+            pad.reset()  # reset before cleanup
+            del clients[client_id]
+        except Exception:
+            pass
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await handle_ws(websocket)
+    
+app.mount("/", StaticFiles(directory="public", html=True), name="static")
+--------------------------------------------------------------------------------

@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "console-controller-python"
+version = "0.1.0"
+description = "Mobile browser controller for Windows emulators using ViGEm (vgamepad) and WebSockets"
+authors = ["Your Name <you@example.com>"]
+packages = [{ include = "console_controller", from = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.95.0"
+uvicorn = {extras = ["standard"], version = "^0.23.0"}
+vgamepad = "^0.0.6"
+# (Optional) install for convenience:
+python-multipart = "^0.0.6"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
