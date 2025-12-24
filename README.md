@@ -9,8 +9,11 @@
 ## Quickstart (for a new user — shortest path)
 1. Install prerequisites (Python, Poetry, ViGEmBus). See *Prerequisites* below.
 2. Clone this repo and `cd` into it.
-3. `poetry install`
-4. Install ViGEmBus driver on Windows and ensure it is running.
+4. **Automated Setup (Windows Only)**: Run the helper script to install/update ViGEmBus and RetroArch:
+```powershell
+python install_deps.py
+```
+(Or manually install them as described below).
 5. Run the server:
 ```powershell
 # from project root (Windows PowerShell)
@@ -72,6 +75,7 @@ Install `vgamepad` is handled by Poetry (`poetry install`) if listed as dependen
 ```powershell
 pip install vgamepad
 ```
+*Alternatively, run `python install_deps.py` to install ViGEmBus via winget automatically.*
 
 ---
 
